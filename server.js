@@ -39,4 +39,8 @@ myDB(async client => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log('Listening on port ' + PORT);
+  console.log('process.env.MONGO_URI ', process.env.MONGO_URI);
+  console.log('process.env.SESSION_SECRET ', process.env.SESSION_SECRET);
+  console.log('process.env.GITHUB_CLIENT_ID ', process.env.GITHUB_CLIENT_ID);
+  console.log('process.env.GITHUB_CLIENT_SECRET ', process.env.GITHUB_CLIENT_SECRET);
 });
