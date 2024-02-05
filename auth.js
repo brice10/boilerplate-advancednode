@@ -30,9 +30,9 @@ module.exports = function (app, myDataBase) {
         clientID: process.env.GITHUB_CLIENT_ID,
         clientSecret: process.env.GITHUB_CLIENT_SECRET,
         callbackURL: 'https://arleon-zemtsop.ddns.me/boilerplate-advancednode/auth/github/callback'
+        // callbackURL: 'http://127.0.0.1:8080/auth/github/callback'
     },
         function (accessToken, refreshToken, profile, cb) {
-            console.log(profile);
             myDataBase.findOneAndUpdate(
                 { id: profile.id },
                 {

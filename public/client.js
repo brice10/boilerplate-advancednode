@@ -6,4 +6,7 @@ $(document).ready(function () {
     $('#m').val('');
     return false; // prevent form submit from refreshing page
   });
+  
+  /*global io*/
+  let socket = io();
 });
