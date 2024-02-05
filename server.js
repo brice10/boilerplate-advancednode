@@ -74,6 +74,14 @@ myDB(async client => {
         connected: false
       });
     });
+
+    socket.on('chat message', (message) => {
+      console.log('Sending the massage: ', message);
+      io.emit('chat message', {
+        username: socket.request.user.username,
+        message: message
+      });
+    });
   });
   
 }).catch(e => {
