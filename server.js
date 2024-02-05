@@ -18,13 +18,6 @@ app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'pug');
 app.set('views', './views/pug');
 
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: true,
-  saveUninitialized: true,
-  cookie: { secure: false }
-}));
-
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -36,6 +29,15 @@ const passportSocketIo = require('passport.socketio');
 const MongoStore = require('connect-mongo')(session);
 const URI = process.env.MONGO_URI;
 const store = new MongoStore({ url: URI });
+
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: true,
+  saveUninitialized: true,
+  cookie: { secure: false },
+  key: 'express.sid',
+  store: store
+}));
 
 io.use(
   passportSocketIo.authorize({
