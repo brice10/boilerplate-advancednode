@@ -8,8 +8,6 @@ const passport = require('passport');
 const routes = require('./routes.js');
 const auth = require('./auth.js');
 
-const LocalStrategy = require('passport-local');
-
 const app = express();
 
 fccTesting(app); //For FCC testing purposes
@@ -31,17 +29,10 @@ app.use(passport.session());
 myDB(async client => {
   const myDataBase = await client.db('database').collection('users');
   routes(app, myDataBase);
+  app.route('/login').post(passport.authenticate('local', { failureRedirect: '/' }), (req, res) => {
+    res.redirect('profile');
+  });
   auth(app, myDataBase);
-
-  passport.use(new LocalStrategy((username, password, done) => {
-    myDataBase.findOne({ username: username }, (err, user) => {
-      console.log(`User ${username} attempted to log in.`);
-      if (err) return done(err);
-      if (!user) return done(null, false);
-      if (password !== user.password) return done(null, false);
-      return done(null, user);
-    });
-  }));
 }).catch(e => {
   app.route('/').get((req, res) => {
     res.render('index', { title: e, message: 'Unable to connect to database' });
