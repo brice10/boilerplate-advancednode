@@ -8,6 +8,8 @@ const passport = require('passport');
 const routes = require('./routes.js');
 const auth = require('./auth.js');
 
+const LocalStrategy = require('passport-local');
+
 const app = express();
 
 fccTesting(app); //For FCC testing purposes
