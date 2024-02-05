@@ -13,7 +13,7 @@ module.exports = function (app, myDataBase) {
     });
 
     app.route('/login').post(passport.authenticate('local', { failureRedirect: '/' }), (req, res) => {
-        res.redirect('/profile');
+        res.redirect('profile');
     });
 
     app.route('/profile').get(ensureAuthenticated, (req, res) => {
@@ -24,7 +24,7 @@ module.exports = function (app, myDataBase) {
 
     app.route('/logout').get((req, res) => {
         req.logout();
-        res.redirect('/');
+        res.redirect('');
     });
 
     app.route('/register').post((req, res, next) => {
@@ -32,7 +32,7 @@ module.exports = function (app, myDataBase) {
             if (err) {
                 next(err);
             } else if (user) {
-                res.redirect('/');
+                res.redirect('');
             } else {
                 const hash = bcrypt.hashSync(req.body.password, 12);
                 myDataBase.insertOne({
@@ -41,7 +41,7 @@ module.exports = function (app, myDataBase) {
                 },
                     (err, doc) => {
                         if (err) {
-                            res.redirect('/');
+                            res.redirect('');
                         } else {
                             next(null, doc.ops[0]);
                         }
@@ -52,14 +52,14 @@ module.exports = function (app, myDataBase) {
     },
         passport.authenticate('local', { failureRedirect: '/' }),
         (req, res, next) => {
-            res.redirect('/profile');
+            res.redirect('profile');
         }
     );
 
     app.route('/auth/github').get(passport.authenticate('github'));
 
     app.route('/auth/github/callback').get(passport.authenticate('github', { failureRedirect: '/' }), (req, res) => {
-        res.redirect('/profile');
+        res.redirect('profile');
     });
 
     app.use((req, res, next) => {
@@ -73,5 +73,5 @@ function ensureAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
         return next();
     }
-    res.redirect('/');
+    res.redirect('');
 };
