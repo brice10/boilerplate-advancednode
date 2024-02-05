@@ -8,6 +8,8 @@ const passport = require('passport');
 const routes = require('./routes.js');
 const auth = require('./auth.js');
 
+const { ObjectID } = require('mongodb');
+
 const app = express();
 
 fccTesting(app); //For FCC testing purposes
@@ -30,6 +32,16 @@ myDB(async client => {
   const myDataBase = await client.db('database').collection('users');
   routes(app, myDataBase);
   auth(app, myDataBase);
+
+  passport.serializeUser((user, done) => {
+    done(null, user._id);
+  });
+
+  passport.deserializeUser((id, done) => {
+    myDataBase.findOne({ _id: new ObjectID(id) }, (err, doc) => {
+      done(null, null);
+    });
+  });
 }).catch(e => {
   app.route('/').get((req, res) => {
     res.render('index', { title: e, message: 'Unable to connect to database' });
