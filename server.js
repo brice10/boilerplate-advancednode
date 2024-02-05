@@ -33,10 +33,8 @@ myDB(async client => {
     res.redirect('profile');
   });
   app.route('/profile').get(ensureAuthenticated, (req, res) => {
-    res.render('profile', {
-        username: req.user.username,
-    });
-});
+    res.render('profile');
+  });
   auth(app, myDataBase);
 }).catch(e => {
   app.route('/').get((req, res) => {
