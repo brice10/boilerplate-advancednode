@@ -30,6 +30,7 @@ app.use(passport.session());
 
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
+const cookieParser = require('cookie-parser');
 
 const passportSocketIo = require('passport.socketio');
 const MongoStore = require('connect-mongo')(session);
