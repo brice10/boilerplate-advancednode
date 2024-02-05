@@ -7,7 +7,6 @@ const session = require('express-session');
 const passport = require('passport');
 const routes = require('./routes.js');
 const auth = require('./auth.js');
-const bcrypt = require('bcrypt');
 
 const app = express();
 
@@ -35,69 +34,11 @@ myDB(async client => {
   routes(app, myDataBase);
   auth(app, myDataBase);
 
-  app.route('/').get((req, res) => {
-    res.render('index', {
-      title: 'Connected to Database',
-      message: 'Please log in',
-      showLogin: true,
-      showRegistration: true
-    });
-  });
-
-  app.route('/register')
-    .post((req, res, next) => {
-      myDataBase.findOne({ username: req.body.username }, (err, user) => {
-        if (err) {
-          next(err);
-        } else if (user) {
-          res.redirect('/');
-        } else {
-          const hash = bcrypt.hashSync(req.body.password, 12);
-          myDataBase.insertOne({
-            username: req.body.username,
-            password: hash
-          },
-            (err, doc) => {
-              if (err) {
-                res.redirect('/');
-              } else {
-                // The inserted document is held within
-                // the ops property of the doc
-                next(null, doc.ops[0]);
-              }
-            }
-          )
-        }
-      })
-    },
-      passport.authenticate('local', { failureRedirect: '/' }),
-      (req, res, next) => {
-        res.redirect('/profile');
-      }
-    );
-
-  passport.use(new LocalStrategy((username, password, done) => {
-    myDataBase.findOne({ username: username }, (err, user) => {
-      console.log(`User ${username} attempted to log in.`);
-      if (err) return done(err);
-      if (!user) return done(null, false);
-      if (!bcrypt.compareSync(password, user.password)) return done(null, false);
-      return done(null, user);
-    });
-  }));
-
 }).catch(e => {
   app.route('/').get((req, res) => {
     res.render('index', { title: e, message: 'Unable to connect to database' });
   });
 });
-
-function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect('/');
-};
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
