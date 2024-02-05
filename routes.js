@@ -24,7 +24,7 @@ module.exports = function (app, myDataBase) {
 
     app.route('/logout').get((req, res) => {
         req.logout();
-        res.redirect('/');
+        return res.redirect('/');
     });
 
     app.route('/register').post((req, res, next) => {
@@ -32,7 +32,7 @@ module.exports = function (app, myDataBase) {
             if (err) {
                 next(err);
             } else if (user) {
-                res.redirect('/');
+                return res.redirect('/');
             } else {
                 const hash = bcrypt.hashSync(req.body.password, 12);
                 myDataBase.insertOne({
@@ -41,7 +41,7 @@ module.exports = function (app, myDataBase) {
                 },
                     (err, doc) => {
                         if (err) {
-                            res.redirect('/');
+                            return res.redirect('/');
                         } else {
                             next(null, doc.ops[0]);
                         }
@@ -73,5 +73,5 @@ function ensureAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
         return next();
     }
-    res.redirect('/');
+    return res.redirect('/');
 };
