@@ -51,9 +51,10 @@ myDB(async client => {
         } else if (user) {
           res.redirect('/');
         } else {
+          const hash = bcrypt.hashSync(req.body.password, 12);
           myDataBase.insertOne({
             username: req.body.username,
-            password: req.body.password
+            password: hash
           },
             (err, doc) => {
               if (err) {
@@ -73,6 +74,16 @@ myDB(async client => {
         res.redirect('/profile');
       }
     );
+
+  passport.use(new LocalStrategy((username, password, done) => {
+    myDataBase.findOne({ username: username }, (err, user) => {
+      console.log(`User ${username} attempted to log in.`);
+      if (err) return done(err);
+      if (!user) return done(null, false);
+      if (!bcrypt.compareSync(password, user.password)) return done(null, false);
+      return done(null, user);
+    });
+  }));
 
 }).catch(e => {
   app.route('/').get((req, res) => {
